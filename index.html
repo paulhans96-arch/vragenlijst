@@ -252,30 +252,30 @@
       <p>Fysiotherapie intake</p>
     </div>
   </div>
-
+ 
   <div class="progress" id="progress">
     <div class="progress-stap actief" id="stap-1"></div>
     <div class="progress-stap" id="stap-2"></div>
     <div class="progress-stap" id="stap-3"></div>
   </div>
-
+ 
   <!-- Stap 1 -->
   <div class="scherm actief" id="scherm-1">
     <div class="content">
       <h2>Uw afspraak</h2>
       <p class="info">Vul hieronder uw afspraakgegevens in.</p>
-
+ 
       <label>Bij welke therapeut heeft u een afspraak?</label>
       <div class="knoppen" id="therapeut-knoppen"></div>
-
+ 
       <label>Wat is de datum van uw afspraak?</label>
       <input type="date" id="afspraakdatum" style="width:100%;padding:10px 14px;border:2px solid #e5e7eb;border-radius:8px;font-size:15px;color:#374151;background:white;margin-bottom:8px;font-family:inherit;cursor:pointer;">
-
+ 
       <label>Hoe laat is uw afspraak?</label>
       <select id="tijdslot">
         <option value="">Kies een tijdstip...</option>
       </select>
-
+ 
       <label>Wat is uw klacht?</label>
       <div class="knoppen" id="klacht-knoppen"></div>
     </div>
@@ -283,7 +283,7 @@
       <button class="volgende-knop" id="volgende-1" disabled onclick="naarStap(2)">Volgende →</button>
     </div>
   </div>
-
+ 
   <!-- Stap 2 -->
   <div class="scherm" id="scherm-2">
     <div class="content" id="vragenlijst-container"></div>
@@ -292,7 +292,7 @@
       <button class="volgende-knop" id="volgende-2" disabled onclick="naarStap(3)">Volgende →</button>
     </div>
   </div>
-
+ 
   <!-- Stap 3 -->
   <div class="scherm" id="scherm-3">
     <div class="content">
@@ -306,7 +306,7 @@
       <button class="verzend-knop" id="verzend-knop" onclick="verzenden()">✓ Verzenden</button>
     </div>
   </div>
-
+ 
   <!-- Dank -->
   <div class="scherm" id="scherm-dank">
     <div class="dank">
@@ -316,11 +316,11 @@
     </div>
   </div>
 </div>
-
+ 
 <script>
 const SUPABASE_URL = "https://uhbmnenyvbyynisdatfo.supabase.co";
 const SUPABASE_KEY = "sb_publishable_ht2bdEKr76mI8EDfzXAnkQ_v5AafWWq";
-
+ 
 const THERAPEUTEN = ["Rintje", "Tom", "Paul"];
 const KLACHTEN = [
   { id: "schouder", label: "Schouderklachten", vragenlijst: "SPADI" },
@@ -357,7 +357,7 @@ const QBPDS_LABELS = [
   "Totaal geen moeite","Nauwelijks moeite","Enige moeite",
   "Veel moeite","Zeer veel moeite","Niet in staat",
 ];
-
+ 
 // State
 let therapeut = null;
 let tijdslot = null;
@@ -366,7 +366,7 @@ let klacht = null;
 let spadiPijn = new Array(5).fill(null);
 let spadiBeperking = new Array(8).fill(null);
 let qbpds = new Array(20).fill(null);
-
+ 
 // Init tijdsloten
 const select = document.getElementById('tijdslot');
 for (let i = 0; i <= 24; i++) {
@@ -379,13 +379,13 @@ for (let i = 0; i <= 24; i++) {
   select.appendChild(opt);
 }
 select.addEventListener('change', () => { tijdslot = select.value || null; checkStap1(); });
-
+ 
 // Datum
 const datumInput = document.getElementById('afspraakdatum');
 // Stel minimum datum in op vandaag
 datumInput.min = new Date().toISOString().split('T')[0];
 datumInput.addEventListener('change', () => { afspraakdatum = datumInput.value || null; checkStap1(); });
-
+ 
 // Therapeut knoppen
 THERAPEUTEN.forEach(naam => {
   const knop = document.createElement('button');
@@ -399,7 +399,7 @@ THERAPEUTEN.forEach(naam => {
   };
   document.getElementById('therapeut-knoppen').appendChild(knop);
 });
-
+ 
 // Klacht knoppen
 KLACHTEN.forEach(k => {
   const knop = document.createElement('button');
@@ -413,26 +413,26 @@ KLACHTEN.forEach(k => {
   };
   document.getElementById('klacht-knoppen').appendChild(knop);
 });
-
+ 
 function checkStap1() {
   document.getElementById('volgende-1').disabled = !(therapeut && afspraakdatum && tijdslot && klacht);
 }
-
+ 
 function naarStap(stap) {
   document.querySelectorAll('.scherm').forEach(s => s.classList.remove('actief'));
   document.getElementById('scherm-' + stap).classList.add('actief');
   document.querySelectorAll('.progress-stap').forEach((s, i) => {
     s.classList.toggle('actief', i < stap);
   });
-
+ 
   if (stap === 2) bouwVragenlijst();
   if (stap === 3) bouwSamenvatting();
 }
-
+ 
 function bouwVragenlijst() {
   const container = document.getElementById('vragenlijst-container');
   container.innerHTML = '';
-
+ 
   if (klacht.id === 'schouder') {
     container.innerHTML = `
       <h2>SPADI — Schouder vragenlijst</h2>
@@ -441,11 +441,11 @@ function bouwVragenlijst() {
     const sectie1 = maakSectie('Pijn schaal', 'Hoe erg is uw pijn? <strong>0 = geen pijn</strong> en <strong>10 = ergst bedenkbare pijn</strong>');
     SPADI_PIJN.forEach((v, i) => sectie1.appendChild(maakSlider(v, spadiPijn[i], 'pijn', i)));
     container.appendChild(sectie1);
-
+ 
     const sectie2 = maakSectie('Beperking schaal', 'Hoeveel moeite heeft u? <strong>0 = geen enkele moeite</strong> en <strong>10 = zo moeilijk dat hulp nodig is</strong>');
     SPADI_BEPERKING.forEach((v, i) => sectie2.appendChild(maakSlider(v, spadiBeperking[i], 'beperking', i)));
     container.appendChild(sectie2);
-
+ 
   } else {
     container.innerHTML = `
       <h2>QBPDS — Rug vragenlijst</h2>
@@ -455,18 +455,18 @@ function bouwVragenlijst() {
   }
   checkStap2();
 }
-
+ 
 function maakSectie(titel, info) {
   const div = document.createElement('div');
   div.className = 'sectie';
   div.innerHTML = `<div class="sectie-header">${titel}</div><p class="sectie-info">${info}</p>`;
   return div;
 }
-
+ 
 function maakSlider(label, waarde, dataArray, index) {
   const div = document.createElement('div');
   div.className = 'vraag-blok';
-
+ 
   div.innerHTML = `<div class="vraag-label">${label}</div>
   <div class="slider-rij">
     <span class="slider-min">0</span>
@@ -474,10 +474,10 @@ function maakSlider(label, waarde, dataArray, index) {
     <span class="slider-max">10</span>
     <div class="slider-waarde" id="sv-${dataArray}-${index}">—</div>
   </div>`;
-
+ 
   const slider = div.querySelector('.frm-slider');
   const waardeEl = div.querySelector('.slider-waarde');
-
+ 
   const update = () => {
     const v = Number(slider.value);
     if (dataArray === 'pijn') spadiPijn[index] = v;
@@ -486,21 +486,21 @@ function maakSlider(label, waarde, dataArray, index) {
     waardeEl.textContent = v;
     checkStap2();
   };
-
+ 
   slider.addEventListener('mousedown', update);
   slider.addEventListener('touchstart', update);
   slider.addEventListener('input', update);
-
+ 
   return div;
 }
-
+ 
 function maakRadio(nummer, label, waarde, onChange) {
   const div = document.createElement('div');
   div.className = 'radio-blok';
   div.innerHTML = `<div class="radio-label"><span class="radio-nummer">${nummer}.</span> ${label}</div>`;
   const opties = document.createElement('div');
   opties.className = 'radio-opties';
-
+ 
   QBPDS_LABELS.forEach((tekst, i) => {
     const knop = document.createElement('button');
     knop.className = 'radio-knop' + (waarde === i ? ' actief' : '');
@@ -515,7 +515,7 @@ function maakRadio(nummer, label, waarde, onChange) {
   div.appendChild(opties);
   return div;
 }
-
+ 
 function checkStap2() {
   let klaar = false;
   if (klacht.id === 'schouder') {
@@ -525,12 +525,12 @@ function checkStap2() {
   }
   document.getElementById('volgende-2').disabled = !klaar;
 }
-
+ 
 function bouwSamenvatting() {
   const ingevuld = klacht.id === 'schouder'
     ? `${spadiPijn.filter(v => v !== null).length + spadiBeperking.filter(v => v !== null).length}/13`
     : `${qbpds.filter(v => v !== null).length}/20`;
-
+ 
   document.getElementById('samenvatting').innerHTML = [
     ['Therapeut', therapeut],
     ['Datum', afspraakdatum],
@@ -545,14 +545,14 @@ function bouwSamenvatting() {
     </div>
   `).join('');
 }
-
+ 
 async function verzenden() {
   const knop = document.getElementById('verzend-knop');
   const fout = document.getElementById('fout');
   knop.disabled = true;
   knop.textContent = 'Bezig...';
   fout.style.display = 'none';
-
+ 
   const data = {
     therapeut,
     afspraakdatum,
@@ -563,7 +563,7 @@ async function verzenden() {
       ? { pijn: spadiPijn, beperking: spadiBeperking }
       : { items: qbpds },
   };
-
+ 
   try {
     const response = await fetch(`${SUPABASE_URL}/rest/v1/vragenlijsten`, {
       method: 'POST',
@@ -575,17 +575,16 @@ async function verzenden() {
       },
       body: JSON.stringify(data),
     });
-
+ 
     if (!response.ok) throw new Error(await response.text());
-
+ 
     document.getElementById('dank-therapeut').textContent = therapeut;
     const result = await response.json();
-    const code = result[0]?.code || '';
-    document.getElementById('dank-code').textContent = code ? `Uw referentiecode: ${code}` : '';
+    // Geen code tonen bij afsprakenvragenlijsten
     document.querySelectorAll('.scherm').forEach(s => s.classList.remove('actief'));
     document.getElementById('scherm-dank').classList.add('actief');
     document.getElementById('progress').style.display = 'none';
-
+ 
   } catch (e) {
     fout.textContent = 'Er is iets misgegaan. Probeer het opnieuw.';
     fout.style.display = 'block';
@@ -596,3 +595,4 @@ async function verzenden() {
 </script>
 </body>
 </html>
+ 
