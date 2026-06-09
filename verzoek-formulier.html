@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Vragenlijst — Fysiotherapie</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      min-height: 100vh;
+      background: linear-gradient(135deg, #f0f4ff 0%, #e8f5e9 100%);
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+      padding: 24px 16px;
+      font-family: Georgia, serif;
+    }
+    .card {
+      background: white;
+      border-radius: 16px;
+      box-shadow: 0 4px 32px rgba(0,0,0,0.10);
+      width: 100%;
+      max-width: 640px;
+      overflow: hidden;
+    }
+    .header {
+      background: #1a56db;
+      padding: 20px 24px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+    .logo {
+      background: white;
+      color: #1a56db;
+      font-weight: bold;
+      font-size: 18px;
+      border-radius: 8px;
+      width: 44px;
+      height: 44px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: monospace;
+    }
+    .header h1 { color: white; font-size: 20px; }
+    .header p { color: rgba(255,255,255,0.75); font-size: 13px; }
+    .code-badge {
+      margin-left: auto;
+      background: rgba(255,255,255,0.2);
+      color: white;
+      padding: 6px 12px;
+      border-radius: 20px;
+      font-size: 13px;
+      font-family: monospace;
+      letter-spacing: 2px;
+    }
+    .progress {
+      display: flex;
+      gap: 4px;
+      padding: 16px 24px 4px;
+    }
+    .progress-stap {
+      flex: 1;
+      height: 4px;
+      border-radius: 2px;
+      background: #e5e7eb;
+      transition: background 0.3s;
+    }
+    .progress-stap.actief { background: #1a56db; }
+    .content { padding: 24px; }
+    h2 { font-size: 22px; color: #111827; margin-bottom: 8px; }
+    .info { color: #6b7280; font-size: 14px; margin-bottom: 20px; line-height: 1.5; }
+    .sectie { margin-bottom: 24px; }
+    .sectie-header {
+      font-size: 16px;
+      font-weight: bold;
+      color: #1a56db;
+      margin-bottom: 6px;
+      border-bottom: 2px solid #eff6ff;
+      padding-bottom: 6px;
+    }
+    .sectie-info { color: #6b7280; font-size: 13px; margin-bottom: 16px; }
+    .vraag-blok {
+      margin-bottom: 16px;
+      padding: 12px;
+      background: #f9fafb;
+      border-radius: 8px;
+    }
+    .vraag-label { font-size: 14px; color: #374151; margin-bottom: 10px; font-weight: 500; }
+    .slider-rij { display: flex; align-items: center; gap: 10px; }
+    .slider-min, .slider-max { font-size: 13px; color: #9ca3af; min-width: 20px; text-align: center; }
+    input[type="range"] { flex: 1; cursor: pointer; accent-color: #1a56db; }
+    .slider-waarde {
+      min-width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      font-size: 14px;
+      background: #e5e7eb;
+      color: #9ca3af;
+      transition: all 0.2s;
+    }
+    .slider-waarde.ingevuld { background: #1a56db; color: white; }
+    .radio-blok {
+      margin-bottom: 16px;
+      padding: 14px;
+      background: #f9fafb;
+      border-radius: 8px;
+    }
+    .radio-label { font-size: 14px; color: #374151; margin-bottom: 10px; font-weight: 500; line-height: 1.4; }
+    .radio-nummer { color: #1a56db; font-weight: bold; }
+    .radio-opties { display: flex; flex-wrap: wrap; gap: 6px; }
+    .radio-knop {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 8px 10px;
+      border: 2px solid #e5e7eb;
+      border-radius: 8px;
+      background: white;
+      cursor: pointer;
+      font-size: 12px;
+      color: #6b7280;
+      min-width: 80px;
+      flex: 1;
+      font-family: inherit;
+      transition: all 0.15s;
+    }
+    .radio-knop.actief { border-color: #1a56db; background: #eff6ff; color: #1a56db; }
+    .radio-score { font-weight: bold; font-size: 18px; margin-bottom: 2px; }
+    .radio-tekst { text-align: center; line-height: 1.2; }
+    .navigatie {
+      display: flex;
+      align-items: center;
+      padding: 16px 24px;
+      border-top: 1px solid #f3f4f6;
+      gap: 12px;
+    }
+    .terug-knop {
+      padding: 10px 20px;
+      border: 2px solid #e5e7eb;
+      border-radius: 8px;
+      background: white;
+      cursor: pointer;
+      font-size: 15px;
+      color: #6b7280;
+      font-family: inherit;
+    }
+    .volgende-knop {
+      padding: 10px 24px;
+      border: none;
+      border-radius: 8px;
+      background: #1a56db;
+      color: white;
+      cursor: pointer;
+      font-size: 15px;
+      font-weight: bold;
+      font-family: inherit;
+      margin-left: auto;
+    }
+    .volgende-knop:disabled { background: #e5e7eb; color: #9ca3af; cursor: not-allowed; }
+    .verzend-knop {
+      padding: 10px 24px;
+      border: none;
+      border-radius: 8px;
+      background: #059669;
+      color: white;
+      cursor: pointer;
+      font-size: 15px;
+      font-weight: bold;
+      font-family: inherit;
+      margin-left: auto;
+    }
+    .verzend-knop:disabled { background: #9ca3af; cursor: not-allowed; }
+    .fout { color: #dc2626; font-size: 13px; margin-bottom: 12px; }
+    .dank { padding: 40px 24px; text-align: center; }
+    .check-cirkel {
+      width: 72px;
+      height: 72px;
+      border-radius: 50%;
+      background: #d1fae5;
+      color: #059669;
+      font-size: 36px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 20px;
+    }
+    .dank h2 { font-size: 26px; margin-bottom: 12px; }
+    .dank p { color: #6b7280; font-size: 15px; line-height: 1.6; }
+    .scherm { display: none; }
+    .scherm.actief { display: block; }
+    .fout-pagina { padding: 40px 24px; text-align: center; }
+    .fout-icoon { font-size: 48px; margin-bottom: 16px; }
+    .fout-pagina h2 { color: #dc2626; margin-bottom: 8px; }
+    .fout-pagina p { color: #6b7280; font-size: 14px; }
+  </style>
+</head>
+<body>
+<div class="card">
+  <div class="header">
+    <div class="logo">FRM</div>
+    <div>
+      <h1>Vragenlijst</h1>
+      <p>Fysiotherapie</p>
+    </div>
+    <div class="code-badge" id="code-badge"></div>
+  </div>
+
+  <div class="progress" id="progress">
+    <div class="progress-stap actief" id="stap-1"></div>
+    <div class="progress-stap" id="stap-2"></div>
+  </div>
+
+  <!-- Laden -->
+  <div class="scherm actief" id="scherm-laden">
+    <div class="content">
+      <p class="info">Vragenlijst laden...</p>
+    </div>
+  </div>
+
+  <!-- Fout -->
+  <div class="scherm" id="scherm-fout">
+    <div class="fout-pagina">
+      <div class="fout-icoon">⚠️</div>
+      <h2>Ongeldige link</h2>
+      <p>Deze vragenlijst link is ongeldig of al eerder ingevuld.<br>Neem contact op met uw therapeut.</p>
+    </div>
+  </div>
+
+  <!-- Vragenlijst -->
+  <div class="scherm" id="scherm-vragenlijst">
+    <div class="content" id="vragenlijst-container"></div>
+    <div class="navigatie">
+      <p class="fout" id="fout" style="display:none"></p>
+      <button class="verzend-knop" id="verzend-knop" disabled onclick="verzenden()">✓ Verzenden</button>
+    </div>
+  </div>
+
+  <!-- Dank -->
+  <div class="scherm" id="scherm-dank">
+    <div class="dank">
+      <div class="check-cirkel">✓</div>
+      <h2>Bedankt!</h2>
+      <p>Uw vragenlijst is succesvol ingevuld.<br>U kunt dit venster sluiten.</p>
+    </div>
+  </div>
+</div>
+
+<script>
+const SUPABASE_URL = "https://uhbmnenyvbyynisdatfo.supabase.co";
+const SUPABASE_KEY = "sb_publishable_ht2bdEKr76mI8EDfzXAnkQ_v5AafWWq";
+
+const SPADI_PIJN = [
+  "De pijn op zijn hevigst",
+  "Wanneer u op de pijnlijke zijde ligt",
+  "Reikend naar iets op een hoge plank",
+  "Het aanraken van de achterkant van de nek",
+  "Duwen met de pijnlijke arm",
+];
+const SPADI_BEPERKING = [
+  "Uw haar wassen","Uw rug wassen","Een hemd aantrekken",
+  "Een shirt met knopen aantrekken","Uw broek aantrekken",
+  "Een object op een hoge plank plaatsen",
+  "Een zwaar object dragen van 5 kg","Iets pakken uit uw achterzak",
+];
+const QBPDS_VRAGEN = [
+  "Opstaan uit bed","De hele nacht slapen","Omdraaien in bed","Autorijden",
+  "20 tot 30 minuten (achter elkaar) staan","Enkele uren in een stoel zitten",
+  "Een trap oplopen","Een klein eindje lopen (300-400 m)","Enkele kilometers lopen",
+  "Naar een hoge plank reiken","Een bal werpen","Een eindje hardlopen (+/- 100 m)",
+  "Iets uit de koelkast pakken","Het bed opmaken","Sokken (of panty) aantrekken",
+  "Voorover buigen om bijv. de badkuip of w.c. schoon te maken",
+  "Een stoel verplaatsen","Een zware deur opentrekken of open duwen",
+  "Dragen van 2 tassen met boodschappen","Een zware koffer optillen en dragen",
+];
+const QBPDS_LABELS = [
+  "Totaal geen moeite","Nauwelijks moeite","Enige moeite",
+  "Veel moeite","Zeer veel moeite","Niet in staat",
+];
+
+let verzoekData = null;
+let spadiPijn = new Array(5).fill(null);
+let spadiBeperking = new Array(8).fill(null);
+let qbpds = new Array(20).fill(null);
+
+function toonScherm(id) {
+  document.querySelectorAll('.scherm').forEach(s => s.classList.remove('actief'));
+  document.getElementById('scherm-' + id).classList.add('actief');
+}
+
+async function init() {
+  // Haal code uit URL
+  const params = new URLSearchParams(window.location.search);
+  const code = params.get('code');
+
+  if (!code || code.length !== 4) {
+    toonScherm('fout');
+    return;
+  }
+
+  document.getElementById('code-badge').textContent = code;
+
+  // Zoek verzoek in Supabase
+  try {
+    const response = await fetch(
+      `${SUPABASE_URL}/rest/v1/vragenlijsten?code=eq.${code}&type=eq.verzoek&ingevoerd=eq.false`,
+      {
+        headers: {
+          'apikey': SUPABASE_KEY,
+          'Authorization': `Bearer ${SUPABASE_KEY}`,
+        }
+      }
+    );
+    const data = await response.json();
+
+    if (!data || data.length === 0) {
+      toonScherm('fout');
+      return;
+    }
+
+    verzoekData = data[0];
+    bouwVragenlijst();
+    toonScherm('vragenlijst');
+
+  } catch(e) {
+    toonScherm('fout');
+  }
+}
+
+function bouwVragenlijst() {
+  const container = document.getElementById('vragenlijst-container');
+  container.innerHTML = '';
+
+  if (verzoekData.vragenlijst === 'SPADI') {
+    container.innerHTML = `
+      <h2>SPADI — Schouder vragenlijst</h2>
+      <p class="info">Met deze vragenlijst wordt de mate van pijn van uw schouder en de ondervonden beperkingen gedurende de <strong>afgelopen week</strong> in kaart gebracht.</p>
+    `;
+    const sectie1 = maakSectie('Pijn schaal', 'Hoe erg is uw pijn? <strong>0 = geen pijn</strong> en <strong>10 = ergst bedenkbare pijn</strong>');
+    SPADI_PIJN.forEach((v, i) => sectie1.appendChild(maakSlider(v, 'pijn', i)));
+    container.appendChild(sectie1);
+
+    const sectie2 = maakSectie('Beperking schaal', 'Hoeveel moeite heeft u? <strong>0 = geen enkele moeite</strong> en <strong>10 = zo moeilijk dat hulp nodig is</strong>');
+    SPADI_BEPERKING.forEach((v, i) => sectie2.appendChild(maakSlider(v, 'beperking', i)));
+    container.appendChild(sectie2);
+
+  } else {
+    container.innerHTML = `
+      <h2>QBPDS — Rug vragenlijst</h2>
+      <p class="info">Onderstaande vragenlijst gaat over de manier waarop uw rugklachten uw dagelijks leven beïnvloeden.</p>
+    `;
+    QBPDS_VRAGEN.forEach((v, i) => container.appendChild(maakRadio(i + 1, v, i)));
+  }
+}
+
+function maakSectie(titel, info) {
+  const div = document.createElement('div');
+  div.className = 'sectie';
+  div.innerHTML = `<div class="sectie-header">${titel}</div><p class="sectie-info">${info}</p>`;
+  return div;
+}
+
+function maakSlider(label, dataArray, index) {
+  const div = document.createElement('div');
+  div.className = 'vraag-blok';
+  div.innerHTML = `
+    <div class="vraag-label">${label}</div>
+    <div class="slider-rij">
+      <span class="slider-min">0</span>
+      <input type="range" min="0" max="10" step="1" value="5" class="frm-slider">
+      <span class="slider-max">10</span>
+      <div class="slider-waarde">—</div>
+    </div>`;
+
+  const slider = div.querySelector('.frm-slider');
+  const waardeEl = div.querySelector('.slider-waarde');
+
+  const update = () => {
+    const v = Number(slider.value);
+    if (dataArray === 'pijn') spadiPijn[index] = v;
+    else spadiBeperking[index] = v;
+    waardeEl.className = 'slider-waarde ingevuld';
+    waardeEl.textContent = v;
+    checkVerzenden();
+  };
+
+  slider.addEventListener('mousedown', update);
+  slider.addEventListener('touchstart', update);
+  slider.addEventListener('input', update);
+  return div;
+}
+
+function maakRadio(nummer, label, index) {
+  const div = document.createElement('div');
+  div.className = 'radio-blok';
+  div.innerHTML = `<div class="radio-label"><span class="radio-nummer">${nummer}.</span> ${label}</div>`;
+  const opties = document.createElement('div');
+  opties.className = 'radio-opties';
+
+  QBPDS_LABELS.forEach((tekst, i) => {
+    const knop = document.createElement('button');
+    knop.className = 'radio-knop';
+    knop.innerHTML = `<span class="radio-score">${i}</span><span class="radio-tekst">${tekst}</span>`;
+    knop.onclick = () => {
+      qbpds[index] = i;
+      opties.querySelectorAll('.radio-knop').forEach(k => k.classList.remove('actief'));
+      knop.classList.add('actief');
+      checkVerzenden();
+    };
+    opties.appendChild(knop);
+  });
+  div.appendChild(opties);
+  return div;
+}
+
+function checkVerzenden() {
+  let klaar = false;
+  if (verzoekData.vragenlijst === 'SPADI') {
+    klaar = spadiPijn.every(v => v !== null) && spadiBeperking.every(v => v !== null);
+  } else {
+    klaar = qbpds.every(v => v !== null);
+  }
+  document.getElementById('verzend-knop').disabled = !klaar;
+}
+
+async function verzenden() {
+  const knop = document.getElementById('verzend-knop');
+  knop.disabled = true;
+  knop.textContent = 'Bezig...';
+
+  const scores = verzoekData.vragenlijst === 'SPADI'
+    ? { pijn: spadiPijn, beperking: spadiBeperking }
+    : { items: qbpds };
+
+  try {
+    const response = await fetch(
+      `${SUPABASE_URL}/rest/v1/vragenlijsten?id=eq.${verzoekData.id}`,
+      {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+          'apikey': SUPABASE_KEY,
+          'Authorization': `Bearer ${SUPABASE_KEY}`,
+          'Prefer': 'return=minimal',
+        },
+        body: JSON.stringify({ scores, ingevuld_op: new Date().toISOString() }),
+      }
+    );
+
+    if (!response.ok) throw new Error();
+    toonScherm('dank');
+    document.getElementById('progress').style.display = 'none';
+
+  } catch(e) {
+    const fout = document.getElementById('fout');
+    fout.textContent = 'Er is iets misgegaan. Probeer het opnieuw.';
+    fout.style.display = 'block';
+    knop.disabled = false;
+    knop.textContent = '✓ Verzenden';
+  }
+}
+
+init();
+</script>
+</body>
+</html>
