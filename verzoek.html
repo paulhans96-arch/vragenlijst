@@ -166,6 +166,43 @@
     }
     .radio-knop-rij.actief .radio-score-klein { background: #1a56db; color: white; }
     .radio-tekst-links { line-height: 1.3; }
+    /* Intake velden */
+    .intake-textarea {
+      width: 100%;
+      min-height: 72px;
+      padding: 10px 12px;
+      border: 2px solid #e5e7eb;
+      border-radius: 8px;
+      font-family: inherit;
+      font-size: 14px;
+      color: #374151;
+      resize: vertical;
+    }
+    .intake-textarea:focus { outline: none; border-color: #1a56db; }
+    .intake-select {
+      width: 100%;
+      padding: 10px 12px;
+      border: 2px solid #e5e7eb;
+      border-radius: 8px;
+      font-family: inherit;
+      font-size: 14px;
+      color: #374151;
+      background: white;
+      cursor: pointer;
+    }
+    .intake-select:focus { outline: none; border-color: #1a56db; }
+    .duur-rij { display: flex; gap: 10px; }
+    .intake-getal {
+      width: 100px;
+      padding: 10px 12px;
+      border: 2px solid #e5e7eb;
+      border-radius: 8px;
+      font-family: inherit;
+      font-size: 14px;
+      color: #374151;
+    }
+    .intake-getal:focus { outline: none; border-color: #1a56db; }
+    .duur-rij .intake-select { flex: 1; }
     .navigatie {
       display: flex;
       align-items: center;
@@ -421,12 +458,27 @@ const QUICKDASH_VRAGEN = [
   { label: "In welke mate had u moeite met slapen door pijn in uw arm, schouder of hand?", schaal: QD_SCHAAL_SLAAP },
 ];
 
+// INTAKE — vrije intakevragen (tekst, dropdown, radio). Geen scores.
+const INTAKE_ZIJDE_OPTIES  = ["Links", "Rechts", "Beide zijden", "Niet van toepassing"];
+const INTAKE_BELOOP_OPTIES = ["Toegenomen", "Afgenomen", "Niet gewijzigd", "Wisselend"];
+const INTAKE_EENHEID_OPTIES = ["dag", "dagen", "week", "weken", "maand", "maanden", "jaar", "jaren"];
+
 let verzoekData = null;
 let spadiPijn = new Array(5).fill(null);
 let spadiBeperking = new Array(8).fill(null);
 let qbpds = new Array(20).fill(null);
 let ndi = new Array(10).fill(null);
 let quickdash = new Array(11).fill(null);
+let intake = {
+  klacht_beschrijving: "",   // vraag 1 → Stoornissen
+  beperkingen: "",           // vraag 2 → Beperkingen
+  zijde: "",                 // vraag 3 → Aangedane zijde (dropdown)
+  duur_aantal: "",           // vraag 4 → deel van Sinds
+  duur_eenheid: "",          // vraag 5 → deel van Sinds
+  ontstaan: "",              // vraag 6 → Historie
+  beloop: "",                // vraag 7 → Beloop (radio)
+  doel: "",                  // vraag 8 → Patiëntbehoeften
+};
 
 function toonScherm(id) {
   document.querySelectorAll('.scherm').forEach(s => s.classList.remove('actief'));
@@ -517,6 +569,31 @@ function bouwVragenlijst() {
       container.appendChild(maakRadio(i + 1, vraag.label, vraag.schaal, ndiSetter('quickdash', i)));
     });
 
+  } else if (lijst === 'Intake') {
+    container.innerHTML = `
+      <h2>Online Intake Vragenlijst</h2>
+      <p class="info">Om uw behandeling goed voor te bereiden, vragen wij u onderstaande vragen zo volledig mogelijk te beantwoorden.</p>
+    `;
+    container.appendChild(maakTekstvraag(1,
+      'Beschrijf de klacht(en) waarvoor u in behandeling komt',
+      'klacht_beschrijving'));
+    container.appendChild(maakTekstvraag(2,
+      'Welke activiteiten kunt u hierdoor niet meer uitvoeren en/of in welke activiteiten wordt u door deze klachten gehinderd?',
+      'beperkingen'));
+    container.appendChild(maakDropdownvraag(3,
+      'Aangedane zijde',
+      INTAKE_ZIJDE_OPTIES, 'zijde'));
+    container.appendChild(maakDuurVraag(4));
+    container.appendChild(maakTekstvraag(6,
+      'Kunt u aangeven hoe de klacht(en) is/zijn ontstaan?',
+      'ontstaan'));
+    container.appendChild(maakRadioTekstvraag(7,
+      'Zijn de klachten sinds het ontstaan…',
+      INTAKE_BELOOP_OPTIES, 'beloop'));
+    container.appendChild(maakTekstvraag(8,
+      'Wat wilt u weer bereiken en binnen welke termijn wilt u dit bereiken door fysiotherapeutische behandeling?',
+      'doel'));
+
   } else {
     // Onbekend type: toon fout in plaats van stilzwijgend de verkeerde lijst
     container.innerHTML = `
@@ -535,6 +612,83 @@ function ndiSetter(welke, index) {
     else if (welke === 'quickdash') quickdash[index] = waarde;
     checkVerzenden();
   };
+}
+
+// ── Intake bouwstenen ────────────────────────────────
+function maakTekstvraag(nummer, label, veld) {
+  const div = document.createElement('div');
+  div.className = 'vraag-blok';
+  div.innerHTML = `<div class="vraag-label"><span class="radio-nummer">${nummer}.</span> ${label}</div>`;
+  const ta = document.createElement('textarea');
+  ta.className = 'intake-textarea';
+  ta.rows = 3;
+  ta.placeholder = 'Uw antwoord…';
+  ta.addEventListener('input', () => { intake[veld] = ta.value; checkVerzenden(); });
+  div.appendChild(ta);
+  return div;
+}
+
+function maakDropdownvraag(nummer, label, opties, veld) {
+  const div = document.createElement('div');
+  div.className = 'vraag-blok';
+  div.innerHTML = `<div class="vraag-label"><span class="radio-nummer">${nummer}.</span> ${label}</div>`;
+  const sel = document.createElement('select');
+  sel.className = 'intake-select';
+  sel.innerHTML = `<option value="">— Maak een keuze —</option>` +
+    opties.map(o => `<option value="${o}">${o}</option>`).join('');
+  sel.addEventListener('change', () => { intake[veld] = sel.value; checkVerzenden(); });
+  div.appendChild(sel);
+  return div;
+}
+
+// Radiogroep die de gekozen tekst opslaat (voor Beloop)
+function maakRadioTekstvraag(nummer, label, opties, veld) {
+  const div = document.createElement('div');
+  div.className = 'radio-blok';
+  div.innerHTML = `<div class="radio-label"><span class="radio-nummer">${nummer}.</span> ${label}</div>`;
+  const rij = document.createElement('div');
+  rij.className = 'radio-opties';
+  opties.forEach(tekst => {
+    const knop = document.createElement('button');
+    knop.className = 'radio-knop';
+    knop.innerHTML = `<span class="radio-tekst">${tekst}</span>`;
+    knop.onclick = () => {
+      intake[veld] = tekst;
+      rij.querySelectorAll('.radio-knop').forEach(k => k.classList.remove('actief'));
+      knop.classList.add('actief');
+      checkVerzenden();
+    };
+    rij.appendChild(knop);
+  });
+  div.appendChild(rij);
+  return div;
+}
+
+// Gecombineerde vraag 4+5: hoeveelheid (tekst) + eenheid (dropdown)
+function maakDuurVraag(nummer) {
+  const div = document.createElement('div');
+  div.className = 'vraag-blok';
+  div.innerHTML = `<div class="vraag-label"><span class="radio-nummer">${nummer}.</span> Sinds wanneer heeft u last van deze klacht(en)?</div>`;
+  const rij = document.createElement('div');
+  rij.className = 'duur-rij';
+
+  const input = document.createElement('input');
+  input.type = 'number';
+  input.min = '1';
+  input.className = 'intake-getal';
+  input.placeholder = 'bijv. 3';
+  input.addEventListener('input', () => { intake.duur_aantal = input.value; checkVerzenden(); });
+
+  const sel = document.createElement('select');
+  sel.className = 'intake-select';
+  sel.innerHTML = `<option value="">— Eenheid —</option>` +
+    INTAKE_EENHEID_OPTIES.map(o => `<option value="${o}">${o}</option>`).join('');
+  sel.addEventListener('change', () => { intake.duur_eenheid = sel.value; checkVerzenden(); });
+
+  rij.appendChild(input);
+  rij.appendChild(sel);
+  div.appendChild(rij);
+  return div;
 }
 
 function maakSectie(titel, info) {
@@ -631,6 +785,15 @@ function checkVerzenden() {
     klaar = ndi.every(v => v !== null);
   } else if (lijst === 'QuickDASH') {
     klaar = quickdash.every(v => v !== null);
+  } else if (lijst === 'Intake') {
+    klaar = intake.klacht_beschrijving.trim() !== '' &&
+            intake.beperkingen.trim() !== '' &&
+            intake.zijde !== '' &&
+            intake.duur_aantal.trim() !== '' &&
+            intake.duur_eenheid !== '' &&
+            intake.ontstaan.trim() !== '' &&
+            intake.beloop !== '' &&
+            intake.doel.trim() !== '';
   }
   document.getElementById('verzend-knop').disabled = !klaar;
 }
@@ -646,6 +809,7 @@ async function verzenden() {
     case 'QBPDS':     scores = { items: qbpds }; break;
     case 'NDI':       scores = { items: ndi }; break;
     case 'QuickDASH': scores = { items: quickdash }; break;
+    case 'Intake':    scores = { intake: intake }; break;
     default:          scores = { items: [] };
   }
 
