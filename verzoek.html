@@ -339,14 +339,13 @@ const SPADI_BEPERKING = [
   "Een zwaar object dragen van 5 kg","Iets pakken uit uw achterzak",
 ];
 const QBPDS_VRAGEN = [
-  "Opstaan uit bed","De hele nacht slapen","Omdraaien in bed","Autorijden",
-  "20 tot 30 minuten (achter elkaar) staan","Enkele uren in een stoel zitten",
+  "Opstaan uit bed","De hele nacht slapen","Omdraaien in bed","Auto rijden",
+  "20-30 minuten (achter elkaar) staan","Enkele uren in een stoel zitten",
   "Een trap oplopen","Een klein eindje lopen (300-400 m)","Enkele kilometers lopen",
-  "Naar een hoge plank reiken","Een bal werpen","Een eindje hardlopen (+/- 100 m)",
+  "Naar een hoge plank reiken","Een bal werpen","Een eindje hardlopen (+100 m)",
   "Iets uit de koelkast pakken","Het bed opmaken","Sokken (of panty) aantrekken",
-  "Voorover buigen om bijv. de badkuip of w.c. schoon te maken",
-  "Een stoel verplaatsen","Een zware deur opentrekken of open duwen",
-  "Dragen van 2 tassen met boodschappen","Een zware koffer optillen en dragen",
+  "Voorover buigen","Een stoel verplaatsen","Een zware deur opentrekken of open duwen",
+  "Dragen van twee tassen met boodschappen","Een zware koffer optillen en dragen",
 ];
 const QBPDS_LABELS = [
   "Totaal geen moeite","Nauwelijks moeite","Enige moeite",
@@ -355,107 +354,107 @@ const QBPDS_LABELS = [
 
 // NDI — 10 items, elk 6 eigen antwoordopties (score 0-5, 0 = geen beperking)
 const NDI_VRAGEN = [
-  { titel: "Pijnintensiteit", opties: [
-    "Ik heb op dit moment geen pijn",
-    "De pijn is op dit moment erg licht",
-    "De pijn is op dit moment matig",
-    "De pijn is op dit moment tamelijk sterk",
-    "De pijn is op dit moment erg sterk",
-    "De pijn is op dit moment de ergst voorstelbare",
+  { titel: "Pijn", opties: [
+    "Ik heb nu geen pijn",
+    "Ik heb nu weinig pijn",
+    "Ik heb nu matige pijn",
+    "Ik heb nu vrij hevige pijn",
+    "Ik heb nu zeer hevige pijn",
+    "Ik heb nu de slechts denkbare pijn",
   ]},
-  { titel: "Persoonlijke verzorging (wassen, aankleden, enz.)", opties: [
-    "Ik kan mezelf normaal verzorgen zonder extra pijn",
-    "Ik kan mezelf normaal verzorgen, maar het veroorzaakt extra pijn",
-    "Het is pijnlijk om mezelf te verzorgen en ik ben langzaam en voorzichtig",
-    "Ik heb wat hulp nodig, maar kan het meeste zelf",
-    "Ik heb elke dag hulp nodig bij het meeste van mijn verzorging",
-    "Ik kan me niet aankleden, ik was me met moeite en blijf in bed",
+  { titel: "Persoonlijke verzorging (wassen, aan- en uitkleden)", opties: [
+    "Ik kan goed voor mezelf zorgen zonder dat de pijn toeneemt",
+    "Ik kan goed voor mezelf zorgen hoewel dat de pijn doet toenemen",
+    "Voor mezelf zorgen is pijnlijk en gaat langzaam en voorzichtig",
+    "Voor mezelf zorgen lukt goed maar vaak met enige hulp",
+    "Elke dag voor mezelf zorgen lukt meestal alleen met hulp",
+    "Ik kan mezelf niet aankleden, mezelf wassen gaat moeilijk en ik blijf in bed",
   ]},
   { titel: "Tillen", opties: [
-    "Ik kan zware voorwerpen tillen zonder extra pijn",
-    "Ik kan zware voorwerpen tillen, maar het geeft extra pijn",
-    "Pijn verhindert me zware voorwerpen van de grond te tillen, maar het lukt als ze handig geplaatst zijn (bijv. op tafel)",
-    "Pijn verhindert me zware voorwerpen te tillen, maar ik kan lichte tot middelzware voorwerpen tillen als ze handig geplaatst zijn",
-    "Ik kan alleen erg lichte voorwerpen tillen",
-    "Ik kan niets tillen of dragen",
+    "Ik kan een zwaar gewicht tillen zonder dat de pijn toeneemt",
+    "Ik kan een zwaar gewicht tillen, maar dat doet de pijn toenemen",
+    "De pijn weerhoudt mij van het optillen van een zwaar gewicht van de grond, maar ik zou dat wel kunnen wanneer dat gewicht hoger (bijv. op een tafel) gelegen is.",
+    "De pijn weerhoudt mij ervan om zware dingen op te tillen, maar het lukt me wel om lichte tot middelzware gewichten te tillen als ze makkelijk geplaatst zijn.",
+    "Ik kan alleen zeer lichte gewichten tillen",
+    "Ik kan helemaal niets tillen of dragen",
   ]},
   { titel: "Lezen", opties: [
-    "Ik kan zoveel lezen als ik wil zonder pijn in mijn nek",
-    "Ik kan zoveel lezen als ik wil met lichte pijn in mijn nek",
-    "Ik kan zoveel lezen als ik wil met matige pijn in mijn nek",
-    "Ik kan niet zoveel lezen als ik wil door matige pijn in mijn nek",
-    "Ik kan nauwelijks lezen door sterke pijn in mijn nek",
-    "Ik kan helemaal niet lezen",
+    "Ik kan zo veel lezen als ik wil zonder pijn in mijn nek",
+    "Ik kan zo veel lezen als ik wil met weinig pijn in mijn nek",
+    "Ik kan zo veel lezen als ik wil met matige pijn in mijn nek",
+    "Ik kan niet zo veel lezen als ik zou willen vanwege de matige pijn in mijn nek",
+    "Ik kan bijna niet meer lezen vanwege de hevige pijn in mijn nek",
+    "Ik kan helemaal niet meer lezen",
   ]},
   { titel: "Hoofdpijn", opties: [
     "Ik heb helemaal geen hoofdpijn",
-    "Ik heb lichte hoofdpijn die niet vaak voorkomt",
-    "Ik heb matige hoofdpijn die niet vaak voorkomt",
-    "Ik heb matige hoofdpijn die vaak voorkomt",
-    "Ik heb sterke hoofdpijn die vaak voorkomt",
-    "Ik heb bijna voortdurend hoofdpijn",
+    "Ik heb af en toe lichte hoofdpijn",
+    "Ik heb af en toe matige hoofdpijn",
+    "Ik heb vaak matige hoofdpijn",
+    "Ik heb vaak hevige hoofdpijn",
+    "Ik heb bijna altijd hoofdpijn",
   ]},
   { titel: "Concentratie", opties: [
-    "Ik kan me volledig concentreren wanneer ik dat wil, zonder moeite",
-    "Ik kan me volledig concentreren wanneer ik dat wil, met lichte moeite",
-    "Ik heb enige moeite me te concentreren wanneer ik dat wil",
-    "Ik heb veel moeite me te concentreren wanneer ik dat wil",
-    "Ik heb erg veel moeite me te concentreren wanneer ik dat wil",
-    "Ik kan me helemaal niet concentreren",
+    "Ik kan mij goed concentreren zonder moeite wanneer ik dat wil",
+    "Ik kan mij goed concentreren met enige moeite wanneer ik dat wil",
+    "Het kost mij duidelijk moeite om te concentreren wanneer ik dat wil",
+    "Het kost mij veel moeite om te concentreren wanneer ik dat wil",
+    "Het kost mij zeer veel moeite om te concentreren wanneer ik dat wil",
+    "Ik kan mij helemaal niet concentreren",
   ]},
   { titel: "Werk", opties: [
     "Ik kan zoveel werk doen als ik wil",
-    "Ik kan alleen mijn gebruikelijke werk doen, maar niet meer",
-    "Ik kan het meeste van mijn gebruikelijke werk doen, maar niet meer",
-    "Ik kan mijn gebruikelijke werk niet doen",
-    "Ik kan nauwelijks enig werk doen",
-    "Ik kan geen enkel werk doen",
+    "Ik kan alleen mijn gewone werk doen, maar niet meer",
+    "Ik kan het grootste deel van mijn gewone werk doen, maar niet meer",
+    "Ik kan mijn gewone werk niet doen",
+    "Ik kan bijna geen enkel werk meer doen",
+    "Ik kan helemaal niet meer werken",
   ]},
   { titel: "Autorijden", opties: [
-    "Ik kan autorijden zonder pijn in mijn nek",
-    "Ik kan zolang autorijden als ik wil met lichte pijn in mijn nek",
-    "Ik kan zolang autorijden als ik wil met matige pijn in mijn nek",
-    "Ik kan niet zolang autorijden als ik wil door matige pijn in mijn nek",
-    "Ik kan nauwelijks autorijden door sterke pijn in mijn nek",
-    "Ik kan helemaal niet autorijden",
+    "Ik kan autorijden zonder enige nekpijn",
+    "Ik kan autorijden zo lang als ik wil met weinig pijn in mijn nek",
+    "Ik kan autorijden zo lang als ik wil met matige pijn in mijn nek",
+    "Ik kan niet autorijden zo lang als ik wil vanwege matige pijn in mijn nek",
+    "Ik kan bijna niet meer autorijden vanwege de hevige pijn in mijn nek",
+    "Ik kan helemaal niet meer autorijden",
   ]},
   { titel: "Slapen", opties: [
-    "Ik heb geen problemen met slapen",
-    "Mijn slaap is licht verstoord (minder dan 1 uur wakker)",
-    "Mijn slaap is licht verstoord (1-2 uur wakker)",
-    "Mijn slaap is matig verstoord (2-3 uur wakker)",
-    "Mijn slaap is sterk verstoord (3-5 uur wakker)",
-    "Mijn slaap is volledig verstoord (5-7 uur wakker)",
+    "Ik heb geen moeite met slapen",
+    "Mijn slaap is heel licht gestoord (minder dan 1 uur wakker)",
+    "Mijn slaap is licht gestoord (1 tot 2 uur wakker)",
+    "Mijn slaap is matig gestoord (2 tot 3 uur wakker)",
+    "Mijn slaap is fors gestoord (3 tot 5 uur wakker)",
+    "Mijn slaap is volledig gestoord (5 tot 7 uur wakker)",
   ]},
-  { titel: "Vrijetijdsbesteding", opties: [
-    "Ik kan al mijn vrijetijdsactiviteiten doen zonder pijn in mijn nek",
-    "Ik kan al mijn vrijetijdsactiviteiten doen met enige pijn in mijn nek",
-    "Ik kan de meeste, maar niet alle, van mijn vrijetijdsactiviteiten doen door pijn in mijn nek",
-    "Ik kan slechts enkele van mijn vrijetijdsactiviteiten doen door pijn in mijn nek",
-    "Ik kan nauwelijks vrijetijdsactiviteiten doen door pijn in mijn nek",
-    "Ik kan geen enkele vrijetijdsactiviteit doen",
+  { titel: "Vrije tijd", opties: [
+    "Ik kan aan alle activiteiten meedoen zonder enige pijn in mijn nek",
+    "Ik kan aan alle activiteiten meedoen met enige pijn in mijn nek",
+    "Vanwege de pijn in mijn nek kan ik aan de meeste, maar niet alle, gebruikelijke activiteiten meedoen",
+    "Vanwege de pijn in mijn nek kan ik aan maar weinig gebruikelijke activiteiten meedoen",
+    "Vanwege de pijn in mijn nek kan ik nagenoeg aan geen activiteiten meedoen",
+    "Ik kan aan geen enkele activiteit meer meedoen",
   ]},
 ];
 
-// QuickDASH — 11 items. Getoond als 1-5, opgeslagen als index 0-4.
+// QuickDASH — 11 items. Getoond met FRM-labels, opgeslagen als index 0-4.
 // Verschillende antwoordschalen per itemgroep.
-const QD_SCHAAL_MOEITE = ["Geen moeite","Weinig moeite","Redelijke moeite","Veel moeite","Niet mogelijk"];
-const QD_SCHAAL_ERNST  = ["Geen","Weinig","Redelijk","Veel","Extreem"];
-const QD_SCHAAL_HINDER  = ["Helemaal niet","Weinig","Redelijk","Veel","Extreem"];
-const QD_SCHAAL_SLAAP  = ["Geen probleem","Weinig moeite","Redelijke moeite","Veel moeite","Zoveel dat ik niet kan slapen"];
+const QD_SCHAAL_PROBLEEM = ["Geen probleem","Gering probleem","Probleem","Ernstig probleem","Niet mogelijk"];
+const QD_SCHAAL_BEPERKT  = ["Absoluut niet beperkt","Enigszins beperkt","Matig beperkt","Veel beperkt","Onmogelijk"];
+const QD_SCHAAL_ERNST    = ["Geen","Mild","Matig","Ernstig","Extreem"];
+const QD_SCHAAL_SLAAP    = ["Geen probleem","Gering probleem","Matig probleem","Ernstig probleem","Ik kan er niet van slapen"];
 
 const QUICKDASH_VRAGEN = [
-  { label: "Een pot met een strak deksel openen", schaal: QD_SCHAAL_MOEITE },
-  { label: "Zwaar huishoudelijk werk doen (bijv. muren wassen, vloeren schrobben)", schaal: QD_SCHAAL_MOEITE },
-  { label: "Een boodschappentas of aktetas dragen", schaal: QD_SCHAAL_MOEITE },
-  { label: "Uw rug wassen", schaal: QD_SCHAAL_MOEITE },
-  { label: "Een mes gebruiken om voedsel te snijden", schaal: QD_SCHAAL_MOEITE },
-  { label: "Vrijetijdsactiviteiten waarbij enige kracht of schokken door uw arm, schouder of hand gaan (bijv. golf, tennis, timmeren)", schaal: QD_SCHAAL_MOEITE },
-  { label: "In welke mate hebben uw arm-, schouder- of handproblemen uw normale sociale activiteiten met familie, vrienden of buren belemmerd?", schaal: QD_SCHAAL_HINDER },
-  { label: "Werd u beperkt in uw werk of andere dagelijkse activiteiten door uw arm-, schouder- of handproblemen?", schaal: QD_SCHAAL_HINDER },
+  { label: "Openen van een vastgedraaide pot", schaal: QD_SCHAAL_PROBLEEM },
+  { label: "Zwaar huishoudelijk werk verrichten (bijv. stofzuigen en/of vloeren soppen)", schaal: QD_SCHAAL_PROBLEEM },
+  { label: "Boodschappentas of aktetas dragen", schaal: QD_SCHAAL_PROBLEEM },
+  { label: "Rug wassen", schaal: QD_SCHAAL_PROBLEEM },
+  { label: "Een mes gebruiken om eten te snijden", schaal: QD_SCHAAL_PROBLEEM },
+  { label: "Vrijetijdsbesteding waarbij enige kracht of belasting uitgeoefend wordt op de arm, schouder of hand (golfen, doe het zelf, tennissen, etc.)", schaal: QD_SCHAAL_PROBLEEM },
+  { label: "In hoeverre heeft uw arm, schouder of hand, problemen gegeven met de normale sociale activiteiten met familie, vrienden, buren of groepen in de afgelopen week?", schaal: QD_SCHAAL_PROBLEEM },
+  { label: "In hoeverre bent u beperkt geweest in uw werk of andere dagelijkse activiteiten ten gevolge van uw arm-, schouder- of handprobleem, gedurende de afgelopen week?", schaal: QD_SCHAAL_BEPERKT },
   { label: "Pijn in uw arm, schouder of hand", schaal: QD_SCHAAL_ERNST },
-  { label: "Tintelingen (speldenprikken) in uw arm, schouder of hand", schaal: QD_SCHAAL_ERNST },
-  { label: "In welke mate had u moeite met slapen door pijn in uw arm, schouder of hand?", schaal: QD_SCHAAL_SLAAP },
+  { label: "Tintelingen (spelden prikken) in arm, schouder of hand", schaal: QD_SCHAAL_ERNST },
+  { label: "Hoeveel moeite heeft u gehad met slapen ten gevolge van pijn in uw arm, schouder of hand, gedurende de afgelopen week?", schaal: QD_SCHAAL_SLAAP },
 ];
 
 // INTAKE — vrije intakevragen (tekst, dropdown, radio). Geen scores.
