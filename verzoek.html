@@ -133,6 +133,39 @@
     .radio-knop.actief { border-color: #1a56db; background: #eff6ff; color: #1a56db; }
     .radio-score { font-weight: bold; font-size: 18px; margin-bottom: 2px; }
     .radio-tekst { text-align: center; line-height: 1.2; }
+    /* Verticale variant (NDI) */
+    .radio-opties-verticaal { display: flex; flex-direction: column; gap: 6px; }
+    .radio-knop-rij {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 12px;
+      border: 2px solid #e5e7eb;
+      border-radius: 8px;
+      background: white;
+      cursor: pointer;
+      font-size: 13px;
+      color: #374151;
+      font-family: inherit;
+      text-align: left;
+      transition: all 0.15s;
+    }
+    .radio-knop-rij.actief { border-color: #1a56db; background: #eff6ff; color: #1a56db; }
+    .radio-score-klein {
+      flex-shrink: 0;
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      background: #e5e7eb;
+      color: #6b7280;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      font-size: 13px;
+    }
+    .radio-knop-rij.actief .radio-score-klein { background: #1a56db; color: white; }
+    .radio-tekst-links { line-height: 1.3; }
     .navigatie {
       display: flex;
       align-items: center;
@@ -283,10 +316,117 @@ const QBPDS_LABELS = [
   "Veel moeite","Zeer veel moeite","Niet in staat",
 ];
 
+// NDI — 10 items, elk 6 eigen antwoordopties (score 0-5, 0 = geen beperking)
+const NDI_VRAGEN = [
+  { titel: "Pijnintensiteit", opties: [
+    "Ik heb op dit moment geen pijn",
+    "De pijn is op dit moment erg licht",
+    "De pijn is op dit moment matig",
+    "De pijn is op dit moment tamelijk sterk",
+    "De pijn is op dit moment erg sterk",
+    "De pijn is op dit moment de ergst voorstelbare",
+  ]},
+  { titel: "Persoonlijke verzorging (wassen, aankleden, enz.)", opties: [
+    "Ik kan mezelf normaal verzorgen zonder extra pijn",
+    "Ik kan mezelf normaal verzorgen, maar het veroorzaakt extra pijn",
+    "Het is pijnlijk om mezelf te verzorgen en ik ben langzaam en voorzichtig",
+    "Ik heb wat hulp nodig, maar kan het meeste zelf",
+    "Ik heb elke dag hulp nodig bij het meeste van mijn verzorging",
+    "Ik kan me niet aankleden, ik was me met moeite en blijf in bed",
+  ]},
+  { titel: "Tillen", opties: [
+    "Ik kan zware voorwerpen tillen zonder extra pijn",
+    "Ik kan zware voorwerpen tillen, maar het geeft extra pijn",
+    "Pijn verhindert me zware voorwerpen van de grond te tillen, maar het lukt als ze handig geplaatst zijn (bijv. op tafel)",
+    "Pijn verhindert me zware voorwerpen te tillen, maar ik kan lichte tot middelzware voorwerpen tillen als ze handig geplaatst zijn",
+    "Ik kan alleen erg lichte voorwerpen tillen",
+    "Ik kan niets tillen of dragen",
+  ]},
+  { titel: "Lezen", opties: [
+    "Ik kan zoveel lezen als ik wil zonder pijn in mijn nek",
+    "Ik kan zoveel lezen als ik wil met lichte pijn in mijn nek",
+    "Ik kan zoveel lezen als ik wil met matige pijn in mijn nek",
+    "Ik kan niet zoveel lezen als ik wil door matige pijn in mijn nek",
+    "Ik kan nauwelijks lezen door sterke pijn in mijn nek",
+    "Ik kan helemaal niet lezen",
+  ]},
+  { titel: "Hoofdpijn", opties: [
+    "Ik heb helemaal geen hoofdpijn",
+    "Ik heb lichte hoofdpijn die niet vaak voorkomt",
+    "Ik heb matige hoofdpijn die niet vaak voorkomt",
+    "Ik heb matige hoofdpijn die vaak voorkomt",
+    "Ik heb sterke hoofdpijn die vaak voorkomt",
+    "Ik heb bijna voortdurend hoofdpijn",
+  ]},
+  { titel: "Concentratie", opties: [
+    "Ik kan me volledig concentreren wanneer ik dat wil, zonder moeite",
+    "Ik kan me volledig concentreren wanneer ik dat wil, met lichte moeite",
+    "Ik heb enige moeite me te concentreren wanneer ik dat wil",
+    "Ik heb veel moeite me te concentreren wanneer ik dat wil",
+    "Ik heb erg veel moeite me te concentreren wanneer ik dat wil",
+    "Ik kan me helemaal niet concentreren",
+  ]},
+  { titel: "Werk", opties: [
+    "Ik kan zoveel werk doen als ik wil",
+    "Ik kan alleen mijn gebruikelijke werk doen, maar niet meer",
+    "Ik kan het meeste van mijn gebruikelijke werk doen, maar niet meer",
+    "Ik kan mijn gebruikelijke werk niet doen",
+    "Ik kan nauwelijks enig werk doen",
+    "Ik kan geen enkel werk doen",
+  ]},
+  { titel: "Autorijden", opties: [
+    "Ik kan autorijden zonder pijn in mijn nek",
+    "Ik kan zolang autorijden als ik wil met lichte pijn in mijn nek",
+    "Ik kan zolang autorijden als ik wil met matige pijn in mijn nek",
+    "Ik kan niet zolang autorijden als ik wil door matige pijn in mijn nek",
+    "Ik kan nauwelijks autorijden door sterke pijn in mijn nek",
+    "Ik kan helemaal niet autorijden",
+  ]},
+  { titel: "Slapen", opties: [
+    "Ik heb geen problemen met slapen",
+    "Mijn slaap is licht verstoord (minder dan 1 uur wakker)",
+    "Mijn slaap is licht verstoord (1-2 uur wakker)",
+    "Mijn slaap is matig verstoord (2-3 uur wakker)",
+    "Mijn slaap is sterk verstoord (3-5 uur wakker)",
+    "Mijn slaap is volledig verstoord (5-7 uur wakker)",
+  ]},
+  { titel: "Vrijetijdsbesteding", opties: [
+    "Ik kan al mijn vrijetijdsactiviteiten doen zonder pijn in mijn nek",
+    "Ik kan al mijn vrijetijdsactiviteiten doen met enige pijn in mijn nek",
+    "Ik kan de meeste, maar niet alle, van mijn vrijetijdsactiviteiten doen door pijn in mijn nek",
+    "Ik kan slechts enkele van mijn vrijetijdsactiviteiten doen door pijn in mijn nek",
+    "Ik kan nauwelijks vrijetijdsactiviteiten doen door pijn in mijn nek",
+    "Ik kan geen enkele vrijetijdsactiviteit doen",
+  ]},
+];
+
+// QuickDASH — 11 items. Getoond als 1-5, opgeslagen als index 0-4.
+// Verschillende antwoordschalen per itemgroep.
+const QD_SCHAAL_MOEITE = ["Geen moeite","Weinig moeite","Redelijke moeite","Veel moeite","Niet mogelijk"];
+const QD_SCHAAL_ERNST  = ["Geen","Weinig","Redelijk","Veel","Extreem"];
+const QD_SCHAAL_HINDER  = ["Helemaal niet","Weinig","Redelijk","Veel","Extreem"];
+const QD_SCHAAL_SLAAP  = ["Geen probleem","Weinig moeite","Redelijke moeite","Veel moeite","Zoveel dat ik niet kan slapen"];
+
+const QUICKDASH_VRAGEN = [
+  { label: "Een pot met een strak deksel openen", schaal: QD_SCHAAL_MOEITE },
+  { label: "Zwaar huishoudelijk werk doen (bijv. muren wassen, vloeren schrobben)", schaal: QD_SCHAAL_MOEITE },
+  { label: "Een boodschappentas of aktetas dragen", schaal: QD_SCHAAL_MOEITE },
+  { label: "Uw rug wassen", schaal: QD_SCHAAL_MOEITE },
+  { label: "Een mes gebruiken om voedsel te snijden", schaal: QD_SCHAAL_MOEITE },
+  { label: "Vrijetijdsactiviteiten waarbij enige kracht of schokken door uw arm, schouder of hand gaan (bijv. golf, tennis, timmeren)", schaal: QD_SCHAAL_MOEITE },
+  { label: "In welke mate hebben uw arm-, schouder- of handproblemen uw normale sociale activiteiten met familie, vrienden of buren belemmerd?", schaal: QD_SCHAAL_HINDER },
+  { label: "Werd u beperkt in uw werk of andere dagelijkse activiteiten door uw arm-, schouder- of handproblemen?", schaal: QD_SCHAAL_HINDER },
+  { label: "Pijn in uw arm, schouder of hand", schaal: QD_SCHAAL_ERNST },
+  { label: "Tintelingen (speldenprikken) in uw arm, schouder of hand", schaal: QD_SCHAAL_ERNST },
+  { label: "In welke mate had u moeite met slapen door pijn in uw arm, schouder of hand?", schaal: QD_SCHAAL_SLAAP },
+];
+
 let verzoekData = null;
 let spadiPijn = new Array(5).fill(null);
 let spadiBeperking = new Array(8).fill(null);
 let qbpds = new Array(20).fill(null);
+let ndi = new Array(10).fill(null);
+let quickdash = new Array(11).fill(null);
 
 function toonScherm(id) {
   document.querySelectorAll('.scherm').forEach(s => s.classList.remove('actief'));
@@ -336,7 +476,9 @@ function bouwVragenlijst() {
   const container = document.getElementById('vragenlijst-container');
   container.innerHTML = '';
 
-  if (verzoekData.vragenlijst === 'SPADI') {
+  const lijst = verzoekData.vragenlijst;
+
+  if (lijst === 'SPADI') {
     container.innerHTML = `
       <h2>SPADI — Schouder vragenlijst</h2>
       <p class="info">Met deze vragenlijst wordt de mate van pijn van uw schouder en de ondervonden beperkingen gedurende de <strong>afgelopen week</strong> in kaart gebracht.</p>
@@ -349,13 +491,50 @@ function bouwVragenlijst() {
     SPADI_BEPERKING.forEach((v, i) => sectie2.appendChild(maakSlider(v, 'beperking', i)));
     container.appendChild(sectie2);
 
-  } else {
+  } else if (lijst === 'QBPDS') {
     container.innerHTML = `
       <h2>QBPDS — Rug vragenlijst</h2>
       <p class="info">Onderstaande vragenlijst gaat over de manier waarop uw rugklachten uw dagelijks leven beïnvloeden.</p>
     `;
-    QBPDS_VRAGEN.forEach((v, i) => container.appendChild(maakRadio(i + 1, v, i)));
+    QBPDS_VRAGEN.forEach((v, i) => container.appendChild(maakRadio(i + 1, v, QBPDS_LABELS, ndiSetter('qbpds', i))));
+
+  } else if (lijst === 'NDI') {
+    container.innerHTML = `
+      <h2>NDI — Nek vragenlijst</h2>
+      <p class="info">Met deze vragenlijst willen wij een indruk krijgen van de beperkingen die u ondervindt in het dagelijks leven ten gevolge van <strong>nekklachten</strong>. Kruis bij elke vraag het antwoord aan dat het meest uw situatie weergeeft.</p>
+    `;
+    NDI_VRAGEN.forEach((vraag, i) => {
+      const label = `<strong>${vraag.titel}</strong>`;
+      container.appendChild(maakRadioVerticaal(i + 1, label, vraag.opties, ndiSetter('ndi', i)));
+    });
+
+  } else if (lijst === 'QuickDASH') {
+    container.innerHTML = `
+      <h2>QuickDASH — Arm, schouder & hand</h2>
+      <p class="info">Deze vragenlijst gaat over uw klachten en uw mogelijkheid om activiteiten uit te voeren. Beantwoord elke vraag zoals u zich de <strong>afgelopen week</strong> heeft gevoeld.</p>
+    `;
+    QUICKDASH_VRAGEN.forEach((vraag, i) => {
+      container.appendChild(maakRadio(i + 1, vraag.label, vraag.schaal, ndiSetter('quickdash', i)));
+    });
+
+  } else {
+    // Onbekend type: toon fout in plaats van stilzwijgend de verkeerde lijst
+    container.innerHTML = `
+      <h2>Onbekende vragenlijst</h2>
+      <p class="info">Deze vragenlijst (${lijst || 'onbekend'}) kan niet worden weergegeven. Neem contact op met uw therapeut.</p>
+    `;
+    document.getElementById('verzend-knop').style.display = 'none';
   }
+}
+
+// Kiest de juiste state-array om de score in weg te schrijven
+function ndiSetter(welke, index) {
+  return (waarde) => {
+    if (welke === 'qbpds') qbpds[index] = waarde;
+    else if (welke === 'ndi') ndi[index] = waarde;
+    else if (welke === 'quickdash') quickdash[index] = waarde;
+    checkVerzenden();
+  };
 }
 
 function maakSectie(titel, info) {
@@ -395,22 +574,45 @@ function maakSlider(label, dataArray, index) {
   return div;
 }
 
-function maakRadio(nummer, label, index) {
+// Horizontale knoppenrij — voor korte optieteksten (QBPDS, QuickDASH)
+function maakRadio(nummer, label, optieLabels, setter) {
   const div = document.createElement('div');
   div.className = 'radio-blok';
   div.innerHTML = `<div class="radio-label"><span class="radio-nummer">${nummer}.</span> ${label}</div>`;
   const opties = document.createElement('div');
   opties.className = 'radio-opties';
 
-  QBPDS_LABELS.forEach((tekst, i) => {
+  optieLabels.forEach((tekst, i) => {
     const knop = document.createElement('button');
     knop.className = 'radio-knop';
     knop.innerHTML = `<span class="radio-score">${i}</span><span class="radio-tekst">${tekst}</span>`;
     knop.onclick = () => {
-      qbpds[index] = i;
+      setter(i);
       opties.querySelectorAll('.radio-knop').forEach(k => k.classList.remove('actief'));
       knop.classList.add('actief');
-      checkVerzenden();
+    };
+    opties.appendChild(knop);
+  });
+  div.appendChild(opties);
+  return div;
+}
+
+// Verticale lijst — voor lange optieteksten (NDI: hele zinnen per antwoord)
+function maakRadioVerticaal(nummer, label, optieLabels, setter) {
+  const div = document.createElement('div');
+  div.className = 'radio-blok';
+  div.innerHTML = `<div class="radio-label"><span class="radio-nummer">${nummer}.</span> ${label}</div>`;
+  const opties = document.createElement('div');
+  opties.className = 'radio-opties-verticaal';
+
+  optieLabels.forEach((tekst, i) => {
+    const knop = document.createElement('button');
+    knop.className = 'radio-knop-rij';
+    knop.innerHTML = `<span class="radio-score-klein">${i}</span><span class="radio-tekst-links">${tekst}</span>`;
+    knop.onclick = () => {
+      setter(i);
+      opties.querySelectorAll('.radio-knop-rij').forEach(k => k.classList.remove('actief'));
+      knop.classList.add('actief');
     };
     opties.appendChild(knop);
   });
@@ -420,10 +622,15 @@ function maakRadio(nummer, label, index) {
 
 function checkVerzenden() {
   let klaar = false;
-  if (verzoekData.vragenlijst === 'SPADI') {
+  const lijst = verzoekData.vragenlijst;
+  if (lijst === 'SPADI') {
     klaar = spadiPijn.every(v => v !== null) && spadiBeperking.every(v => v !== null);
-  } else {
+  } else if (lijst === 'QBPDS') {
     klaar = qbpds.every(v => v !== null);
+  } else if (lijst === 'NDI') {
+    klaar = ndi.every(v => v !== null);
+  } else if (lijst === 'QuickDASH') {
+    klaar = quickdash.every(v => v !== null);
   }
   document.getElementById('verzend-knop').disabled = !klaar;
 }
@@ -433,9 +640,14 @@ async function verzenden() {
   knop.disabled = true;
   knop.textContent = 'Bezig...';
 
-  const scores = verzoekData.vragenlijst === 'SPADI'
-    ? { pijn: spadiPijn, beperking: spadiBeperking }
-    : { items: qbpds };
+  let scores;
+  switch (verzoekData.vragenlijst) {
+    case 'SPADI':     scores = { pijn: spadiPijn, beperking: spadiBeperking }; break;
+    case 'QBPDS':     scores = { items: qbpds }; break;
+    case 'NDI':       scores = { items: ndi }; break;
+    case 'QuickDASH': scores = { items: quickdash }; break;
+    default:          scores = { items: [] };
+  }
 
   try {
     const response = await fetch(
