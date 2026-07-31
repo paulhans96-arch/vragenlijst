@@ -464,6 +464,8 @@ const INTAKE_BELOOP_OPTIES = ["Toegenomen", "Afgenomen", "Niet gewijzigd", "Wiss
 const INTAKE_EENHEID_OPTIES = ["dag", "dagen", "week", "weken", "maand", "maanden", "jaar", "jaren"];
 
 let verzoekData = null;
+let verzoekWachtrij = [];   // alle verzoeken met deze code
+let wachtrijIndex = 0;      // welk verzoek nu wordt ingevuld
 let spadiPijn = new Array(5).fill(null);
 let spadiBeperking = new Array(8).fill(null);
 let qbpds = new Array(20).fill(null);
@@ -497,7 +499,7 @@ async function init() {
 
   document.getElementById('code-badge').textContent = code;
 
-  // Zoek verzoek in Supabase
+  // Zoek alle verzoeken met deze code in Supabase
   try {
     const response = await fetch(
       `${SUPABASE_URL}/rest/v1/vragenlijsten?code=eq.${code}&type=eq.verzoek&ingevoerd=eq.false`,
@@ -515,13 +517,58 @@ async function init() {
       return;
     }
 
-    verzoekData = data[0];
-    bouwVragenlijst();
-    toonScherm('vragenlijst');
+    // Alleen verzoeken die nog niet ingevuld zijn (scores nog leeg)
+    let openstaand = data.filter(r => r.scores === null);
+
+    if (openstaand.length === 0) {
+      // Alles al ingevuld → direct bedankt
+      toonScherm('dank');
+      document.getElementById('progress').style.display = 'none';
+      return;
+    }
+
+    // Intake eerst, daarna de vragenlijsten
+    openstaand.sort((a, b) => {
+      if (a.vragenlijst === 'Intake') return -1;
+      if (b.vragenlijst === 'Intake') return 1;
+      return 0;
+    });
+
+    verzoekWachtrij = openstaand;
+    wachtrijIndex = 0;
+    laadHuidigVerzoek();
 
   } catch(e) {
     toonScherm('fout');
   }
+}
+
+// Laadt het verzoek waar we nu in de wachtrij staan
+function laadHuidigVerzoek() {
+  verzoekData = verzoekWachtrij[wachtrijIndex];
+
+  // State resetten voor de nieuwe vragenlijst
+  spadiPijn = new Array(5).fill(null);
+  spadiBeperking = new Array(8).fill(null);
+  qbpds = new Array(20).fill(null);
+  ndi = new Array(10).fill(null);
+  quickdash = new Array(11).fill(null);
+  intake = {
+    klacht_beschrijving: "", beperkingen: "", zijde: "",
+    duur_aantal: "", duur_eenheid: "", ontstaan: "", beloop: "", doel: "",
+  };
+
+  // Verzend-knop terugzetten
+  const verzendKnop = document.getElementById('verzend-knop');
+  verzendKnop.disabled = true;
+  verzendKnop.style.display = '';
+  verzendKnop.textContent = verzoekWachtrij.length > 1
+    ? `✓ Verzenden (${wachtrijIndex + 1}/${verzoekWachtrij.length})`
+    : '✓ Verzenden';
+
+  bouwVragenlijst();
+  toonScherm('vragenlijst');
+  window.scrollTo(0, 0);
 }
 
 function bouwVragenlijst() {
@@ -829,15 +876,25 @@ async function verzenden() {
     );
 
     if (!response.ok) throw new Error();
-    toonScherm('dank');
-    document.getElementById('progress').style.display = 'none';
+
+    // Volgende verzoek in de wachtrij, of klaar
+    wachtrijIndex++;
+    if (wachtrijIndex < verzoekWachtrij.length) {
+      document.getElementById('fout').style.display = 'none';
+      laadHuidigVerzoek();
+    } else {
+      toonScherm('dank');
+      document.getElementById('progress').style.display = 'none';
+    }
 
   } catch(e) {
     const fout = document.getElementById('fout');
     fout.textContent = 'Er is iets misgegaan. Probeer het opnieuw.';
     fout.style.display = 'block';
     knop.disabled = false;
-    knop.textContent = '✓ Verzenden';
+    knop.textContent = verzoekWachtrij.length > 1
+      ? `✓ Verzenden (${wachtrijIndex + 1}/${verzoekWachtrij.length})`
+      : '✓ Verzenden';
   }
 }
 
