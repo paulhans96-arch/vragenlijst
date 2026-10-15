@@ -457,6 +457,58 @@ const QUICKDASH_VRAGEN = [
   { label: "Hoeveel moeite heeft u gehad met slapen ten gevolge van pijn in uw arm, schouder of hand, gedurende de afgelopen week?", schaal: QD_SCHAAL_SLAAP },
 ];
 
+// ─────────────────────────────────────────────────────────────
+// KOOS-12 (knie) & HOOS-12 (heup) — elk 12 items, opgeslagen als
+// index 0-4 in volgorde: 4× Pijn · 4× Functie · 4× Kwaliteit van leven.
+// Scores: { items: [12 getallen 0-4] }.
+//
+// ⚠️ CONTROLEREN VÓÓR LIVEGANG: de item-selectie en exacte bewoording
+// hieronder zijn de standaard NL KOOS-12/HOOS-12 benadering. Leg ze naast
+// de officiële KOOS-12/HOOS-12 en pas waar nodig aan. De volgorde
+// (Pijn → Functie → QoL) moet gelijk blijven aan de FRM-invoer.
+// ─────────────────────────────────────────────────────────────
+const KH_EXTENT     = ["Geen", "Gering", "Matig", "Ernstig", "Extreem"];
+const KH_MOEITE     = ["Geen", "Gering", "Matig", "Ernstig", "Extreem"];
+const KH_FREQ       = ["Nooit", "Maandelijks", "Wekelijks", "Dagelijks", "Altijd"];
+const KH_LIFESTYLE  = ["Helemaal niet", "Enigszins", "Matig", "Ernstig", "Totaal"];
+const KH_VERTROUWEN = ["Helemaal niet", "Enigszins", "Matig", "Ernstig", "Extreem"];
+
+const KOOS12_VRAGEN = [
+  // Pijn — "Welke mate van kniepijn heeft u de afgelopen week ervaren bij:"
+  { label: "Kniepijn bij het lopen op een vlakke ondergrond", schaal: KH_EXTENT },
+  { label: "Kniepijn bij traplopen (op of af)", schaal: KH_EXTENT },
+  { label: "Kniepijn 's nachts in bed", schaal: KH_EXTENT },
+  { label: "Kniepijn bij rechtop staan", schaal: KH_EXTENT },
+  // Functie — "Hoeveel moeite heeft u de afgelopen week ondervonden bij:"
+  { label: "Opstaan uit een stoel", schaal: KH_MOEITE },
+  { label: "Bukken naar de vloer / iets oppakken", schaal: KH_MOEITE },
+  { label: "Draaien/pivoteren op uw aangedane knie", schaal: KH_MOEITE },
+  { label: "In- en uitstappen van de auto", schaal: KH_MOEITE },
+  // Kwaliteit van leven
+  { label: "Hoe vaak bent u zich bewust van uw knieprobleem?", schaal: KH_FREQ },
+  { label: "Heeft u uw leefstijl aangepast om activiteiten te vermijden die schadelijk kunnen zijn voor uw knie?", schaal: KH_LIFESTYLE },
+  { label: "In welke mate heeft u last van een gebrek aan vertrouwen in uw knie?", schaal: KH_VERTROUWEN },
+  { label: "Hoeveel moeite heeft u in het algemeen met uw knie?", schaal: KH_EXTENT },
+];
+
+const HOOS12_VRAGEN = [
+  // Pijn — "Welke mate van heuppijn heeft u de afgelopen week ervaren bij:"
+  { label: "Heuppijn bij traplopen (op of af)", schaal: KH_EXTENT },
+  { label: "Heuppijn bij het lopen op een vlakke ondergrond", schaal: KH_EXTENT },
+  { label: "Heuppijn 's nachts in bed", schaal: KH_EXTENT },
+  { label: "Heuppijn bij rechtop staan", schaal: KH_EXTENT },
+  // Functie — "Hoeveel moeite heeft u de afgelopen week ondervonden bij:"
+  { label: "In- en uitstappen van de auto", schaal: KH_MOEITE },
+  { label: "Sokken of kousen aantrekken", schaal: KH_MOEITE },
+  { label: "Opstaan uit bed", schaal: KH_MOEITE },
+  { label: "Zwaar huishoudelijk werk (bijv. dweilen, stofzuigen)", schaal: KH_MOEITE },
+  // Kwaliteit van leven
+  { label: "Hoe vaak bent u zich bewust van uw heupprobleem?", schaal: KH_FREQ },
+  { label: "Heeft u uw leefstijl aangepast om activiteiten te vermijden die schadelijk kunnen zijn voor uw heup?", schaal: KH_LIFESTYLE },
+  { label: "In welke mate heeft u last van een gebrek aan vertrouwen in uw heup?", schaal: KH_VERTROUWEN },
+  { label: "Hoeveel moeite heeft u in het algemeen met uw heup?", schaal: KH_EXTENT },
+];
+
 // INTAKE — vrije intakevragen (tekst, dropdown, radio). Geen scores.
 const INTAKE_ZIJDE_OPTIES  = ["Links", "Rechts", "Beide zijden", "Niet van toepassing"];
 const INTAKE_BELOOP_OPTIES = ["Toegenomen", "Afgenomen", "Niet gewijzigd", "Wisselend"];
@@ -470,6 +522,8 @@ let spadiBeperking = new Array(8).fill(null);
 let qbpds = new Array(20).fill(null);
 let ndi = new Array(10).fill(null);
 let quickdash = new Array(11).fill(null);
+let koos = new Array(12).fill(null);
+let hoos = new Array(12).fill(null);
 let intake = {
   klacht_beschrijving: "",   // vraag 1 → Stoornissen
   beperkingen: "",           // vraag 2 → Beperkingen
@@ -552,6 +606,8 @@ function laadHuidigVerzoek() {
   qbpds = new Array(20).fill(null);
   ndi = new Array(10).fill(null);
   quickdash = new Array(11).fill(null);
+  koos = new Array(12).fill(null);
+  hoos = new Array(12).fill(null);
   intake = {
     klacht_beschrijving: "", beperkingen: "", zijde: "",
     duur_aantal: "", duur_eenheid: "", ontstaan: "", beloop: "", doel: "",
@@ -615,6 +671,19 @@ function bouwVragenlijst() {
       container.appendChild(maakRadio(i + 1, vraag.label, vraag.schaal, ndiSetter('quickdash', i)));
     });
 
+  } else if (lijst === 'KOOS-12' || lijst === 'HOOS-12') {
+    const isKnie = lijst === 'KOOS-12';
+    const vragen = isKnie ? KOOS12_VRAGEN : HOOS12_VRAGEN;
+    const gewricht = isKnie ? 'knie' : 'heup';
+    container.innerHTML = `
+      <h2>${lijst} — ${isKnie ? 'Knie' : 'Heup'} vragenlijst</h2>
+      <p class="info">Deze vragenlijst gaat over uw ${gewricht} en hoe deze uw dagelijks leven beïnvloedt gedurende de <strong>afgelopen week</strong>. Kies bij elke vraag het antwoord dat het best bij u past.</p>
+    `;
+    const setterNaam = isKnie ? 'koos' : 'hoos';
+    vragen.forEach((vraag, i) => {
+      container.appendChild(maakRadio(i + 1, vraag.label, vraag.schaal, ndiSetter(setterNaam, i)));
+    });
+
   } else if (lijst === 'Intake') {
     container.innerHTML = `
       <h2>Online Intake Vragenlijst</h2>
@@ -656,6 +725,8 @@ function ndiSetter(welke, index) {
     if (welke === 'qbpds') qbpds[index] = waarde;
     else if (welke === 'ndi') ndi[index] = waarde;
     else if (welke === 'quickdash') quickdash[index] = waarde;
+    else if (welke === 'koos') koos[index] = waarde;
+    else if (welke === 'hoos') hoos[index] = waarde;
     checkVerzenden();
   };
 }
@@ -831,6 +902,10 @@ function checkVerzenden() {
     klaar = ndi.every(v => v !== null);
   } else if (lijst === 'QuickDASH') {
     klaar = quickdash.every(v => v !== null);
+  } else if (lijst === 'KOOS-12') {
+    klaar = koos.every(v => v !== null);
+  } else if (lijst === 'HOOS-12') {
+    klaar = hoos.every(v => v !== null);
   } else if (lijst === 'Intake') {
     klaar = intake.klacht_beschrijving.trim() !== '' &&
             intake.beperkingen.trim() !== '' &&
@@ -855,6 +930,8 @@ async function verzenden() {
     case 'QBPDS':     scores = { items: qbpds }; break;
     case 'NDI':       scores = { items: ndi }; break;
     case 'QuickDASH': scores = { items: quickdash }; break;
+    case 'KOOS-12':   scores = { items: koos }; break;
+    case 'HOOS-12':   scores = { items: hoos }; break;
     case 'Intake':    scores = { intake: intake }; break;
     default:          scores = { items: [] };
   }
